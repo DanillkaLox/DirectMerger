@@ -61,7 +61,7 @@ class ExternalMergeSortOptimized
     
     static string SortAndSaveTempFile(List<int> data, int index)
     {
-        data.Sort();
+        MergeSort(data);
         string tempFileName = Path.Combine(tempDirectory, $"tempfile_{index}.txt");
         using (StreamWriter writer = new StreamWriter(tempFileName))
         {
@@ -71,6 +71,48 @@ class ExternalMergeSortOptimized
             }
         }
         return tempFileName;
+    }
+    
+    private static void MergeSort(List<int> array)
+    {
+        if (array.Count <= 1)
+            return;
+
+        int middle = array.Count / 2;
+        List<int> left = array.Take(middle).ToList();
+        List<int> right = array.Skip(middle).ToList();
+
+        MergeSort(left);
+        MergeSort(right);
+
+        Merge(left, right, array);
+    }
+    
+    private static void Merge(List<int> left, List<int> right, List<int> result)
+    {
+        int i = 0, j = 0, k = 0;
+
+        while (i < left.Count && j < right.Count)
+        {
+            if (left[i] <= right[j])
+            {
+                result[k++] = left[i++];
+            }
+            else
+            {
+                result[k++] = right[j++];
+            }
+        }
+
+        while (i < left.Count)
+        {
+            result[k++] = left[i++];
+        }
+
+        while (j < right.Count)
+        {
+            result[k++] = right[j++];
+        }
     }
     
     static void MergeFiles(List<string> tempFiles, string outputFile)
